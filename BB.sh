@@ -25,7 +25,13 @@ createArchive() {
     mkdir $directory || log "Failed to make a Archive"
 }
 
-
+checkDir() { # Accepteerd 1 directory als argument
+    if [ ! -d "$1" ]
+    then
+        # Dir bestaat niet, geef error naar stderr en doe in log.txt
+        echo "ERROR: \"$1\" is not an existing directory." 2> ~/log.txt
+    fi
+}
 
 configureBB() {
     declare OPTARG
@@ -34,7 +40,7 @@ configureBB() {
     declare destination
     declare words
 
-    while getopts ':d:p:' arg
+    while getopts ':d:b:' arg
     do
         case $arg in
         d)
@@ -42,8 +48,9 @@ configureBB() {
             echo "$OPTARG"
             ;;
 
-        p)
+        b)
             words="$OPTARG"
+            checkDir "$words"
             echo "$OPTARG"
             ;;
 
@@ -66,6 +73,23 @@ configureBB() {
         done
         createArchive
     fi
+
+    if [ -z "$words" ]
+    then
+        touch defaultwords.txt
+        echo "bad" > defaultwords.txt
+        words="./defaultwords.txt"
+    fi
+
+    # Maak een array van alles wat in de file $words staat
+    mapfile -t wordsArray < "$words"
+
+    echo "-d = $destination"
+    echo "-b = ${wordsArray[*]}"
 }
 
+# Nog te doen
+# bad words filteren met regex
+# Moet het programma terminaten als de dir niet bestaat?
+# createArchive als destination bestaat
 
