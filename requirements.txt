@@ -1,0 +1,9 @@
+	  ConfigureBB
+- "configureBB" can only be ran before "runBB"
+- Order of options is irrelevant
+- the parameter -d will specify the directory that contains the report and the copied files for "runBB" (what rapport??)
+- if -d is not supplied, create a folder called archive in the current directory.
+- if folder "archive" exists, create a new folder "archive1", if that exists, create "archive2" etc.
+- the parameter -b specifies the name and location of the file with the bad words.
+- if no -b is passed, the bad word list will consist of the word "bad"
+- The user must receive a descriptive error in stderr for any non-valid option or parameter.
