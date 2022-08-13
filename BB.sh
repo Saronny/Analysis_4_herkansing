@@ -29,7 +29,7 @@ checkDir() { # Accepteerd 1 directory als argument
     if [ ! -d "$1" ]
     then
         # Dir bestaat niet, geef error naar stderr en doe in log.txt
-        echo "ERROR: \"$1\" is not an existing directory." 2> ~/log.txt
+        echo "ERROR: \"$1\" is not an existing directory." 2> ~/log.txt # Hoe moet deze error gehandeld worden? Misschien uit function breaken op een of andere manier want "exit 1" sluit de hele console.
     fi
 }
 
@@ -45,13 +45,17 @@ configureBB() {
         case $arg in
         d)
             destination="$OPTARG"
-            echo "$OPTARG"
+            checkDir "$destination"
+            # echo "$OPTARG"
             ;;
 
         b)
             words="$OPTARG"
-            checkDir "$words"
-            echo "$OPTARG"
+            if [ ! -f "$words" ] # check of file bestaat
+            then
+                echo "ERROR: $words is not an existing file." 2> ~/log.txt # Hoe moet deze error gehandeld worden? Misschien uit function breaken op een of andere manier want "exit 1" sluit de hele console.
+            fi
+            # echo "$OPTARG"
             ;;
 
         \?)
@@ -71,18 +75,20 @@ configureBB() {
             directory="archive$i"
             ((i=i+1))
         done
+        destination="./$directory"
         createArchive
     fi
 
     if [ -z "$words" ]
     then
-        touch defaultwords.txt
-        echo "bad" > defaultwords.txt
-        words="./defaultwords.txt"
+        wordsArray=("bad")
+        #touch defaultwords.txt
+        #echo "bad" > defaultwords.txt
+        #words="./defaultwords.txt"
+    else
+        # Maak een array van alles wat in de file $words staat
+        mapfile -t wordsArray < "$words"
     fi
-
-    # Maak een array van alles wat in de file $words staat
-    mapfile -t wordsArray < "$words"
 
     echo "-d = $destination"
     echo "-b = ${wordsArray[*]}"
@@ -92,4 +98,3 @@ configureBB() {
 # bad words filteren met regex
 # Moet het programma terminaten als de dir niet bestaat?
 # createArchive als destination bestaat
-
