@@ -1,5 +1,11 @@
 #!/bin/bash
 
+########### GLOBALS ###########
+declare destination
+declare words
+declare -a wordsArray
+declare filesToCopy
+
 log() {
     error="there was an error in the execution, for more details check log.txt"
 
@@ -37,8 +43,9 @@ configureBB() {
     declare OPTARG
     declare arg
     declare OPTIND
-    declare destination
-    declare words
+
+    unset destination
+    unset words
 
     while getopts ':d:b:' arg
     do
@@ -94,7 +101,27 @@ configureBB() {
     echo "-b = ${wordsArray[*]}"
 }
 
+runBB() {
+    unset filesToCopy
+    declare -a filesArray
+
+    for i in "${wordsArray[@]}"
+    do
+        filesToCopy+=$(grep -r "${wordsArray[i]}" ./ | cut -f 1 -d ":")
+        filesToCopy+=$"\n"
+    done
+
+    filesToCopy=$(echo -e "$filesToCopy")
+    matchCount=$(echo "$filesToCopy" | wc -l)
+    #echo "$matchCount"
+
+    for (( i=1; i<=$matchCount ; i++ ))
+    do
+        echo "${filesToCopy}" | head -"${i}" | tail -1
+    done
+}
+
 # Nog te doen
-# bad words filteren met regex
 # Moet het programma terminaten als de dir niet bestaat?
 # createArchive als destination bestaat
+
