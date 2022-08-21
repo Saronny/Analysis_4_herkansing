@@ -106,15 +106,24 @@ runBB() {
     unset filesToCopy
     declare -a uniqsArr
 
-    for i in "${wordsArray[@]}"
+    echo "words array: "
+    for i in "${wordsArray[@]}" #grepping filenames
     do
-        filesToCopy+=("$(grep -rl "${wordsArray[i]}" "./" )")
+        filesToCopy+=("$(grep -rl  "$1" ./ )")
+        echo $i
     done
 
-    uniqsArr=($(echo "${filesToCopy[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+    echo "filesToCopy array: "
+    for i in "${filesToCopy[@]}"
+    do
+        echo $i
+    done
+
+    uniqsArr=($(echo "${filesToCopy[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' ')) #sorting array
     echo "unique array: "
     for i in "${uniqsArr[@]}"
     do
+
         echo $i
     done
 }
