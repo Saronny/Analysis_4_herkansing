@@ -4,7 +4,7 @@
 declare destination
 declare words
 declare -a wordsArray
-declare filesToCopy
+declare -a filesToCopy
 
 log() {
     error="there was an error in the execution, for more details check log.txt"
@@ -18,6 +18,21 @@ log() {
         echo "$1" >> ~/log.txt
         echo $error
     fi
+}
+
+report() {
+
+    filename="report"
+    i=1
+    while [ -f "$destination/$filename.txt" ]
+    do
+        filename="report$i"
+        echo "$i"
+        ((i=i+1))
+    done
+
+    echo "$destination/$filename"
+    touch "$destination/$filename.txt"
 }
 
 createArchive() {
@@ -101,27 +116,54 @@ configureBB() {
     echo "-b = ${wordsArray[*]}"
 }
 
+
 runBB() {
     unset filesToCopy
-    declare -a filesArray
+    declare -a uniqsArr
 
-    for i in "${wordsArray[@]}"
+    for i in "${wordsArray[@]}" #grepping filenames
     do
-        filesToCopy+=$(grep -r "${wordsArray[i]}" ./ | cut -f 1 -d ":")
-        filesToCopy+=$"\n"
+        filesToCopy+=($(grep -r "$i" ./ | cut -f 1 -d ":"))
     done
 
-    filesToCopy=$(echo -e "$filesToCopy")
-    matchCount=$(echo "$filesToCopy" | wc -l)
-    #echo "$matchCount"
-
-    for (( i=1; i<=$matchCount ; i++ ))
+    echo "filesToCopy array: "
+    for i in "${filesToCopy[@]}"
     do
-        echo "${filesToCopy}" | head -"${i}" | tail -1
+        echo $i
     done
+
+    uniqsArr=($(echo "${filesToCopy[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' ')) #sorting array
+    echo "unique array: "
+    for i in "${uniqsArr[@]}"
+    do
+
+        echo $i
+    done
+
+    echo "filenames: "
+    for i in "${uniqsArr[@]}"
+    do
+        filename="${i##*/}"
+        dateofCreation=$(stat -c '%w' "$i" | cut -d ' ' -f1 )
+        owner=$(stat -c '%U' "$i")
+        newName="${owner}_${dateofCreation}_${filename}"
+
+        j=1
+        while [ -f "$destination/$newName" ]
+        do
+            newName="$newName$j"
+            ((j=j+1))
+        done
+
+        echo "$newName"
+    done
+    report
 }
 
 # Nog te doen
 # Moet het programma terminaten als de dir niet bestaat?
 # createArchive als destination bestaat
+
+
+
 
