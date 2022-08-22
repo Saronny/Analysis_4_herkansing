@@ -121,6 +121,29 @@ runBB() {
     unset filesToCopy
     declare -a uniqsArr
 
+    reportname="report"
+    i=1
+    while [ -f "$destination/$reportname.txt" ]
+    do
+        reportname="report$i"
+        echo "$i"
+        ((i=i+1))
+    done
+
+    echo "$destination/$reportname"
+    touch "$destination/$reportname.txt"
+
+    currentDate=`date +"%Y-%m-%d %T"`
+    wd=`pwd`
+    destAbsolute=`readlink -f $destination`
+    badAbsolute=`readlink -f $words`
+    echo "Report generated on: $currentDate" >> "$destination/$reportname.txt"
+    echo "Original directory: $wd" >> "$destination/$reportname.txt"
+    echo "Destination path: $destAbsolute" >> "$destination/$reportname.txt"
+    echo "List with bad words: $badAbsolute" >> "$destination/$reportname.txt"
+    echo "" >> "$destination/$reportname.txt"
+
+
     for i in "${wordsArray[@]}" #grepping filenames
     do
         filesToCopy+=($(grep -r "$i" ./ | cut -f 1 -d ":"))
@@ -139,18 +162,6 @@ runBB() {
 
         echo $i
     done
-
-    reportname="report"
-    i=1
-    while [ -f "$destination/$reportname.txt" ]
-    do
-        reportname="report$i"
-        echo "$i"
-        ((i=i+1))
-    done
-
-    echo "$destination/$reportname"
-    touch "$destination/$reportname.txt"
 
     echo "filenames: "
     for i in "${uniqsArr[@]}"
@@ -182,4 +193,6 @@ runBB() {
 
         cp -v "$i" "$destination/$newName" >> "$destination/$reportname.txt"
     done
+}
+
 }
