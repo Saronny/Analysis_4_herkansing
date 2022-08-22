@@ -147,22 +147,28 @@ runBB() {
         dateofCreation=$(stat -c '%w' "$i" | cut -d ' ' -f1 )
         owner=$(stat -c '%U' "$i")
 
-        name="${i%.*}"
-        name="${name:2}" # Haalt de eerste 2 characters "./" weg
-        ext="${i##*.}" # de extension van de file
+        #echo "$i"
 
-        newName="${owner}_${dateofCreation}_${name}.${ext}"
+        filename="${filename%.*}"
+        #echo "$name"
+        #filename="${filename:2}" # Haalt de eerste 2 characters "./" weg
+        #echo "filename: $filename"
+        ext="${i##*.}" # de extension van de file
+        #echo "ext: $ext"
+
+        newName="${owner}_${dateofCreation}_${filename}.${ext}"
+        #echo "newname: $newName"
 
         j=1
         while [ -f "$destination/$newName" ]
         do
-            newName="${owner}_${dateofCreation}_${name}${j}.${ext}"
+            newName="${owner}_${dateofCreation}_${filename}${j}.${ext}"
             ((j=j+1))
         done
 
-        echo "$newName"
+        #echo "newname: $newName"
 
-        cp "$i" "$destination/$newName"
+        cp -v "$i" "$destination/$newName"
     done
     # report
 }
