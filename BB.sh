@@ -159,7 +159,7 @@ runBB() {
         dateofCreation=$(stat -c '%w' "$i" | cut -d ' ' -f1 )
         owner=$(stat -c '%U' "$i")
 
-        #echo "$i"
+        # echo "$i"
 
         filename="${filename%.*}"
         #echo "$name"
@@ -178,18 +178,8 @@ runBB() {
             ((j=j+1))
         done
 
-        #echo "newname: $newName"
+        echo "newname: $newName"
 
         cp -v "$i" "$destination/$newName" >> "$destination/$reportname.txt"
     done
 }
-
-
-
-# Nog te doen
-# Moet het programma terminaten als de dir niet bestaat?
-# createArchive als destination bestaat
-
-
-
-
