@@ -17,10 +17,10 @@ T = should be tested
 
 	ConfigureBB
 - "configureBB" can only be ran before "runBB"
-T Order of options is irrelevant
-T the parameter -d will specify the directory that contains the report and the copied files for "runBB" (what report??)
-T if -d is not supplied, create a folder called archive in the current directory.
-T if folder "archive" exists, create a new folder "archive1", if that exists, create "archive2" etc.
-T the parameter -b specifies the name and location of the file with the bad words.
-T if no -b is passed, the bad word list will consist of the word "bad"
-T The user must receive a descriptive error in stderr for any non-valid option or parameter.
+✓ Order of options is irrelevant
+✓ the parameter -d will specify the directory that contains the report and the copied files for "runBB" (what report??)
+✓ if -d is not supplied, create a folder called archive in the current directory.
+✓ if folder "archive" exists, create a new folder "archive1", if that exists, create "archive2" etc.
+✓ the parameter -b specifies the name and location of the file with the bad words.
+✓ if no -b is passed, the bad word list will consist of the word "bad"
+✓ The user must receive a descriptive error in stderr for any non-valid option or parameter.
