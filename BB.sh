@@ -22,17 +22,17 @@ log() {
 
 report() {
 
-    filename="report"
+    reportname="report"
     i=1
-    while [ -f "$destination/$filename.txt" ]
+    while [ -f "$destination/$reportname.txt" ]
     do
-        filename="report$i"
+        reportname="report$i"
         echo "$i"
         ((i=i+1))
     done
 
-    echo "$destination/$filename"
-    touch "$destination/$filename.txt"
+    echo "$destination/$reportname"
+    touch "$destination/$reportname.txt"
 }
 
 createArchive() {
@@ -140,6 +140,18 @@ runBB() {
         echo $i
     done
 
+    reportname="report"
+    i=1
+    while [ -f "$destination/$reportname.txt" ]
+    do
+        reportname="report$i"
+        echo "$i"
+        ((i=i+1))
+    done
+
+    echo "$destination/$reportname"
+    touch "$destination/$reportname.txt"
+
     echo "filenames: "
     for i in "${uniqsArr[@]}"
     do
@@ -168,10 +180,10 @@ runBB() {
 
         #echo "newname: $newName"
 
-        cp -v "$i" "$destination/$newName"
+        cp -v "$i" "$destination/$newName" >> "$destination/$reportname.txt"
     done
-    # report
 }
+
 
 
 # Nog te doen
