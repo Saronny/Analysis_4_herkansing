@@ -146,19 +146,27 @@ runBB() {
         filename="${i##*/}"
         dateofCreation=$(stat -c '%w' "$i" | cut -d ' ' -f1 )
         owner=$(stat -c '%U' "$i")
-        newName="${owner}_${dateofCreation}_${filename}"
+
+        name="${i%.*}"
+        name="${name:2}" # Haalt de eerste 2 characters "./" weg
+        ext="${i##*.}" # de extension van de file
+
+        newName="${owner}_${dateofCreation}_${name}.${ext}"
 
         j=1
         while [ -f "$destination/$newName" ]
         do
-            newName="$newName$j"
+            newName="${owner}_${dateofCreation}_${name}${j}.${ext}"
             ((j=j+1))
         done
 
         echo "$newName"
+
+        cp "$i" "$destination/$newName"
     done
-    report
+    # report
 }
+
 
 # Nog te doen
 # Moet het programma terminaten als de dir niet bestaat?
