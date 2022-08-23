@@ -3,16 +3,16 @@ T = should be tested
 ✓ = done
 
 	RunBB
-- "runBB" will run the service
-- No warning or communication should be sent during runBB, except there should be an error message when an error occured
-- The error message should be "there was an error in the execution, for more details check log.txt in the home directory."
-- Any error met should be logged in log.txt which is located in the $HOME directory
-- The script should look through the present and sub directories
-- It should check each file
-- Everytime a match is found, it should be copied to the destination
-- The copied file should have the name changed with the date of the file creation, and the owner of the file
-- If the name of the file already exists in the destination folder, the name should get a 1 on the end, if that exists it should get a 2 etc.
-- Compressed files will not be extracted
+✓ "runBB" will run the service
+T No warning or communication should be sent during runBB, except there should be an error message when an error occured
+✓ The error message should be "there was an error in the execution, for more details check log.txt in the home directory."
+T Any error met should be logged in log.txt which is located in the $HOME directory
+✓ The script should look through the present and sub directories
+✓ It should check each file
+✓ Everytime a match is found, it should be copied to the destination
+✓ The copied file should have the name changed with the date of the file creation, and the owner of the file
+✓ If the name of the file already exists in the destination folder, the name should get a 1 on the end, if that exists it should get a 2 etc.
+✓ Compressed files will not be extracted
 
 
 	ConfigureBB
