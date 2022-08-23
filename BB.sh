@@ -20,6 +20,7 @@ log() {
     fi
 }
 
+
 createArchive() {
     directory="archive"
     i=1
@@ -106,11 +107,9 @@ runBB() {
     unset filesToCopy
     declare -a uniqsArr
 
-    echo "words array: "
     for i in "${wordsArray[@]}" #grepping filenames
     do
-        filesToCopy+=("$(grep -rl  "$1" ./ )")
-        echo $i
+        filesToCopy+=($(grep -r --exclude-dir=archive* --exclude-dir=archive --exclude="$words"  "$i" ./ | cut -f 1 -d ":"))
     done
 
     echo "filesToCopy array: "
@@ -126,12 +125,79 @@ runBB() {
 
         echo $i
     done
+
+
+    reportname="report"
+    i=1
+    while [ -f "$destination/$reportname.txt" ]
+    do
+        reportname="report$i"
+        echo "$i"
+        ((i=i+1))
+    done
+
+    echo "$destination/$reportname"
+    touch "$destination/$reportname.txt"
+
+    currentDate=`date +"%Y-%m-%d %T"`      ### reporting
+    wd=`pwd`
+    destAbsolute=`readlink -f $destination`
+    badAbsolute=`readlink -f $words`
+    echo "Report generated on: $currentDate" >> "$destination/$reportname.txt"
+    echo "Original directory: $wd" >> "$destination/$reportname.txt"
+    echo "Destination path: $destAbsolute" >> "$destination/$reportname.txt"
+    echo "List with bad words: $badAbsolute" >> "$destination/$reportname.txt"
+    echo "" >> "$destination/$reportname.txt"
+    echo "" >> "$destination/$reportname.txt"
+    echo "configureBB parameters: " >> "$destination/$reportname.txt"
+    echo "  -d = $destination"  >> "$destination/$reportname.txt"
+    echo "  -b = ${wordsArray[*]}" >> "$destination/$reportname.txt"
+    echo "" >> "$destination/$reportname.txt"
+    echo "" >> "$destination/$reportname.txt"
+    echo "copied filenames: " >> "$destination/$reportname.txt"
+    echo "  filenames = ${uniqsArr[*]##*/}" >> "$destination/$reportname.txt"
+    echo "" >> "$destination/$reportname.txt"
+    echo "" >> "$destination/$reportname.txt"
+
+
+
+    echo "filenames: "
+    for i in "${uniqsArr[@]}"
+    do
+        filename="${i##*/}"
+        dateofCreation=$(stat -c '%w' "$i" | cut -d ' ' -f1 )
+        owner=$(stat -c '%U' "$i")
+
+
+        ext="${i##*.}" # de extension van de file
+        echo "ext: $ext"
+
+        #newName="${owner}_${dateofCreation}_${filename}"
+        #echo "newname: $newName"
+        baseName=$( basename  "$i")
+        if [ $filename != $baseName ]
+        then
+            j=1
+            newName="${owner}_${dateofCreation}_${filename}.${ext}"
+            while [ -f "$destination/$newName" ]
+            do
+                newName="$owner_$dateofCreation_$filename${j}.$ext"
+                ((j=j+1))
+            done
+
+        else
+            j=1
+            newName="${owner}_${dateofCreation}_${filename}"
+            while [ -f "$destination/$newName" ]
+            do
+                newName="${owner}_${dateofCreation}_${filename}${j}"
+                ((j=j+1))
+            done
+        fi
+
+        #echo "newname: $newName"
+
+        echo "copy verbose: " >> "$destination/$reportname.txt"  ## reporting/copying
+        cp -v "$i" "$destination/$newName" >> "$destination/$reportname.txt"
+    done
 }
-
-# Nog te doen
-# Moet het programma terminaten als de dir niet bestaat?
-# createArchive als destination bestaat
-
-
-
-
