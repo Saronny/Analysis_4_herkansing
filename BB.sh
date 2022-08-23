@@ -111,7 +111,7 @@ runBB() {
 
     for i in "${wordsArray[@]}" #grepping filenames
     do
-        filesToCopy+=($(grep -r --exclude="$words" "$i" ./ | cut -f 1 -d ":"))
+        filesToCopy+=($(grep -r --exclude-dir=archive* --exclude-dir=archive --exclude="$words"  "$i" ./ | cut -f 1 -d ":"))
     done
 
     uniqsArr=($(echo "${filesToCopy[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' ')) #sorting array
