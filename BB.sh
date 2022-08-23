@@ -7,6 +7,8 @@ declare -a wordsArray
 declare -a filesToCopy
 
 errorsOccured=0
+unset destination
+unset words
 
 log() {
     error="there was an error in the execution, for more details check log.txt"
@@ -51,6 +53,7 @@ configureBB() {
     unset words
 
     log # Maakt een log file als die niet bestaat
+
 
     while getopts ':d:b:' arg
     do
@@ -108,6 +111,13 @@ configureBB() {
 runBB() {
     unset filesToCopy
     declare -a uniqsArr
+
+    if [ -z $words ] || [ -z $destination ]
+    then
+        log "missing parameters"
+        echo "There was an error in the execution, for more details check log.txt"
+        return 1
+    fi
 
     for i in "${wordsArray[@]}" #grepping filenames
     do
@@ -183,8 +193,10 @@ runBB() {
         fi
     done
 
-    if [ errorsOccured == 1 ]
+    if [ $errorsOccured -eq 1 ]
     then
         echo "There was an error in the execution, for more details check log.txt"
     fi
 }
+
+
