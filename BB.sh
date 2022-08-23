@@ -38,6 +38,7 @@ checkDir() { # Accepteerd 1 directory als argument
     then
         # Dir bestaat niet, geef error naar stderr en doe in log.txt
         echo "ERROR: \"$1\" is not an existing directory." 2> ~/log.txt # Hoe moet deze error gehandeld worden? Misschien uit function breaken op een of andere manier want "exit 1" sluit de hele console.
+        log "ERROR: \"$1\" is not an existing directory."
     fi
 }
 
@@ -65,12 +66,14 @@ configureBB() {
             if [ ! -f "$words" ] # check of file bestaat
             then
                 echo "ERROR: $words is not an existing file." 2> ~/log.txt # Hoe moet deze error gehandeld worden? Misschien uit function breaken op een of andere manier want "exit 1" sluit de hele console.
+                log "ERROR: $words is not an existing file."
             fi
             # echo "$OPTARG"
             ;;
 
         \?)
             echo "ERROR: -"$OPTARG" is not a valid option."
+            log "ERROR: -"$OPTARG" is not a valid option."
             ;;
 
         esac
@@ -93,16 +96,10 @@ configureBB() {
     if [ -z "$words" ]
     then
         wordsArray=("bad")
-        #touch defaultwords.txt
-        #echo "bad" > defaultwords.txt
-        #words="./defaultwords.txt"
     else
         # Maak een array van alles wat in de file $words staat
         mapfile -t wordsArray < "$words"
     fi
-
-    echo "-d = $destination"
-    echo "-b = ${wordsArray[*]}"
 
     errorsOccured=0
 }
@@ -117,31 +114,16 @@ runBB() {
         filesToCopy+=($(grep -r --exclude="$words" "$i" ./ | cut -f 1 -d ":"))
     done
 
-    echo "filesToCopy array: "
-    for i in "${filesToCopy[@]}"
-    do
-        echo $i
-    done
-
     uniqsArr=($(echo "${filesToCopy[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' ')) #sorting array
-    echo "unique array: "
-    for i in "${uniqsArr[@]}"
-    do
-
-        echo $i
-    done
-
 
     reportname="report"
     i=1
     while [ -f "$destination/$reportname.txt" ]
     do
         reportname="report$i"
-        echo "$i"
         ((i=i+1))
     done
 
-    echo "$destination/$reportname"
     touch "$destination/$reportname.txt"
 
     currentDate=`date +"%Y-%m-%d %T"`      ### reporting
@@ -164,16 +146,11 @@ runBB() {
     echo "" >> "$destination/$reportname.txt"
     echo "" >> "$destination/$reportname.txt"
 
-
-
-    echo "filenames: "
     for i in "${uniqsArr[@]}"
     do
         filename="${i##*/}"
         dateofCreation=$(stat -c '%w' "$i" | cut -d ' ' -f1 )
         owner=$(stat -c '%U' "$i")
-
-        # echo "$i"
 
         if [[ "$filename" == *"."* ]] # check if file has an extension
         then
@@ -188,8 +165,6 @@ runBB() {
                 newName="${owner}_${dateofCreation}_${filename}${j}.${ext}"
                 ((j=j+1))
             done
-
-            echo "newname: $newName"
         else
             newName="${owner}_${dateofCreation}_${filename}"
 
@@ -208,7 +183,7 @@ runBB() {
         fi
     done
 
-    if [ errorsOccured -eq 1 ]
+    if [ errorsOccured == 1 ]
     then
         echo "There was an error in the execution, for more details check log.txt"
     fi
