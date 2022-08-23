@@ -6,18 +6,19 @@ declare words
 declare -a wordsArray
 declare -a filesToCopy
 
+errorsOccured=0
+
 log() {
     error="there was an error in the execution, for more details check log.txt"
 
-    if [ -f ~/log.txt ]
+    errorsOccured=1
+
+    if [ ! -f ~/log.txt ]
     then
-        echo "$1" >> ~/log.txt
-        echo $error
-    else
         touch ~/log.txt
-        echo "$1" >> ~/log.txt
-        echo $error
     fi
+
+    echo "$1" >> ~/log.txt
 }
 
 
@@ -47,6 +48,8 @@ configureBB() {
 
     unset destination
     unset words
+
+    log # Maakt een log file als die niet bestaat
 
     while getopts ':d:b:' arg
     do
@@ -100,6 +103,8 @@ configureBB() {
 
     echo "-d = $destination"
     echo "-b = ${wordsArray[*]}"
+
+    errorsOccured=0
 }
 
 
@@ -197,6 +202,14 @@ runBB() {
         fi
 
         echo "copy verbose: " >> "$destination/$reportname.txt"  ## reporting/copying
-        cp -v "$i" "$destination/$newName" >> "$destination/$reportname.txt"
+        if ! cp -v "$i" "$destination/$newName" >> "$destination/$reportname.txt" 2> ~/log.txt
+        then
+            log "Copy failed!"
+        fi
     done
+
+    if [ errorsOccured -eq 1 ]
+    then
+        echo "There was an error in the execution, for more details check log.txt"
+    fi
 }
